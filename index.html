@@ -4,1426 +4,637 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HexGen - Premium Minecraft & Game Hosting</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#00aaff',
+                        'primary-dark': '#0088cc',
+                        'dark': '#0f172a',
+                        'darker': '#1e293b',
+                        'darkest': '#020617',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'shine': 'shine 3s infinite',
+                        'fadeInUp': 'fadeInUp 0.8s ease-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        shine: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' },
+                        },
+                        fadeInUp: {
+                            'from': {
+                                opacity: '0',
+                                transform: 'translateY(20px)'
+                            },
+                            'to': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --primary: #00aaff;
-            --primary-dark: #0088cc;
-            --secondary: #007bff;
-            --dark: #0e0e26;
-            --darker: #15152e;
-            --darkest: #0a0a1a;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-            --light-gray: #e9ecef;
-            --dark-gray: #343a40;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--dark);
-            color: white;
-            line-height: 1.6;
-            overflow-x: hidden;
         }
-
-        /* Loading Animation */
+        .gradient-text {
+            background: linear-gradient(to right, #00aaff, #00e5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--darkest);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
             transition: opacity 0.5s, visibility 0.5s;
         }
-
         .loader.hidden {
             opacity: 0;
             visibility: hidden;
         }
-
-        .loader-content {
-            text-align: center;
-        }
-
-        .loader-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(0,170,255,0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .top-banner {
-            background-color: var(--primary);
-            text-align: center;
-            padding: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .top-banner::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: shine 3s infinite;
-        }
-        
-        @keyframes shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Enhanced Navbar - Improved Mobile View */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            background-color: var(--darker);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        .navbar .logo {
-            display: flex;
-            align-items: center;
-        }
-        
-        .navbar .logo img {
-            height: 50px;
-            margin-right: 10px;
-        }
-        
-        .nav-links {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin: 0 12px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            position: relative;
-            transition: color 0.3s;
-            padding: 8px 0;
-        }
-        
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--primary);
-            transition: width 0.3s;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 5px;
-        }
-        
-        .btn {
-            display: inline-block;
-            background-color: var(--secondary);
-            border-radius: 5px;
-            padding: 10px 18px;
-            color: white;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-        
-        .btn:hover {
-            background-color: #0069d9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .btn-primary {
-            background-color: var(--primary);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-        
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-        
-        .btn-outline:hover {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        /* Enhanced Hero Section */
-        .hero {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 100px 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0,170,255,0.1) 0%, rgba(0,170,255,0) 70%);
-            z-index: -1;
-        }
-        
-        .hero-text {
-            max-width: 550px;
-            animation: fadeInUp 0.8s ease-out;
-        }
-        
-        .hero-text h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, var(--primary), #00e5ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.2;
-        }
-        
-        .hero-text p {
-            margin: 20px 0;
-            color: #ccc;
-            font-size: 1.1rem;
-            line-height: 1.7;
-        }
-        
-        .price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin: 15px 0;
-            display: flex;
-            align-items: flex-end;
-        }
-        
-        .price span {
-            font-size: 1rem;
-            color: var(--gray);
-            margin-left: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin: 25px 0;
-        }
-        
-        .feature {
-            background-color: rgba(0,170,255,0.1);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s;
-        }
-        
-        .feature:hover {
-            background-color: rgba(0,170,255,0.2);
-            transform: translateY(-2px);
-        }
-        
-        .feature i {
-            margin-right: 5px;
-            color: var(--primary);
-        }
-        
-        .minecraft-img {
-            max-width: 500px;
-            width: 100%;
-            height: auto;
-            animation: float 6s ease-in-out infinite;
-            filter: drop-shadow(0 10px 20px rgba(0,170,255,0.3));
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Features Section */
-        .section {
-            padding: 100px 0;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-            font-size: 2.5rem;
-            font-weight: 800;
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(to right, var(--primary), transparent);
-            border-radius: 3px;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-        
-        .feature-card {
-            background-color: var(--darker);
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border-color: rgba(0,170,255,0.3);
-        }
-        
-        .feature-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-        
-        .feature-card h3 {
-            margin-bottom: 15px;
-            font-weight: 700;
-            font-size: 1.3rem;
-        }
-        
-        .feature-card p {
-            color: var(--gray);
-            font-size: 0.95rem;
-            line-height: 1.7;
-        }
-        
-        /* Plans Section - Updated */
-        .plans {
-            background-color: var(--darkest);
-            padding: 100px 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .plans::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(0,170,255,0.05) 0%, transparent 50%);
-            z-index: 0;
-        }
-        
-        .plans .section-title {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .plans-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .plan-card {
-            background-color: var(--darker);
-            border-radius: 10px;
-            padding: 40px 30px;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-        
-        .plan-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-        }
-        
-        .plan-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border-color: rgba(0,170,255,0.3);
-        }
-        
-        .plan-card.popular {
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 30px rgba(0,170,255,0.2);
-        }
-        
-        .plan-card.popular::after {
-            content: "MOST POPULAR";
-            position: absolute;
-            top: 15px;
-            right: -30px;
-            background-color: var(--primary);
-            color: white;
-            padding: 5px 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            transform: rotate(45deg);
-            transform-origin: center;
-        }
-        
-        .plan-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .plan-price {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: flex-end;
-        }
-        
-        .plan-price .currency {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-right: 5px;
-            margin-bottom: 5px;
-        }
-        
-        .plan-price .period {
-            font-size: 1rem;
-            color: var(--gray);
-            margin-left: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .plan-features {
-            margin: 30px 0;
-        }
-        
-        .plan-feature {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 0.95rem;
-            padding: 8px 0;
-            border-bottom: 1px dashed rgba(255,255,255,0.1);
-        }
-        
-        .plan-feature i {
-            color: var(--primary);
-            margin-right: 10px;
-            font-size: 1.1rem;
-        }
-
-        /* Plan Icons */
-        .plan-icon {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-        
-        /* Testimonials Section */
-        .testimonials {
-            padding: 100px 0;
-            background-color: var(--darker);
-        }
-        
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-        
-        .testimonial-card {
-            background-color: var(--dark);
-            border-radius: 10px;
-            padding: 30px;
-            position: relative;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        .testimonial-card::before {
-            content: '"';
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 5rem;
-            color: rgba(0,170,255,0.1);
-            font-family: serif;
-            line-height: 1;
-            z-index: 0;
-        }
-        
-        .testimonial-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .testimonial-text {
-            font-style: italic;
-            margin-bottom: 20px;
-            color: var(--light-gray);
-            line-height: 1.7;
-        }
-        
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-        }
-        
-        .testimonial-author img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-        }
-        
-        .author-info h4 {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .author-info p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        /* Stats Section */
-        .stats {
-            padding: 80px 0;
-            background-color: var(--darkest);
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            text-align: center;
-        }
-        
-        .stat-item {
-            padding: 30px;
-        }
-        
-        .stat-number {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-        
-        .stat-label {
-            color: var(--gray);
-            font-size: 1rem;
-        }
-        
-        /* Locations Section */
-        .locations {
-            padding: 100px 0;
-            background-color: var(--darker);
-        }
-        
-        .locations-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-        
-        .location-card {
-            background-color: var(--dark);
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        .location-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            border-color: rgba(0,170,255,0.3);
-        }
-        
-        .location-icon {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-        
-        .location-card h3 {
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        .location-card p {
-            color: var(--gray);
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-        }
-        
-        .location-ping {
-            display: inline-block;
-            background-color: var(--success);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        /* CTA Section */
-        .cta {
-            padding: 100px 0;
-            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .cta::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 80% 20%, rgba(0,170,255,0.1) 0%, transparent 50%);
-            z-index: 0;
-        }
-        
-        .cta-content {
-            position: relative;
-            z-index: 1;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .cta h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, var(--primary), #00e5ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .cta p {
-            color: #ccc;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-            line-height: 1.7;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--darkest);
-            padding: 80px 0 20px;
-            position: relative;
-        }
-        
-        footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(to right, transparent, var(--primary), transparent);
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-column h3 {
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-            color: white;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .footer-column h3::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 50%;
-            height: 2px;
-            background-color: var(--primary);
-        }
-        
-        .footer-column ul {
-            list-style: none;
-        }
-        
-        .footer-column ul li {
-            margin-bottom: 12px;
-        }
-        
-        .footer-column ul li a {
-            color: var(--gray);
-            text-decoration: none;
-            transition: color 0.3s;
-            font-size: 0.95rem;
-            display: inline-block;
-            padding: 5px 0;
-        }
-        
-        .footer-column ul li a:hover {
-            color: var(--primary);
-            transform: translateX(5px);
-        }
-        
-        .footer-column p {
-            color: var(--gray);
-            font-size: 0.95rem;
-            line-height: 1.7;
-            margin-bottom: 20px;
-        }
-        
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: var(--darker);
-            color: var(--gray);
-            border-radius: 50%;
-            font-size: 1.2rem;
-            transition: all 0.3s;
-        }
-        
-        .social-links a:hover {
-            background-color: var(--primary);
-            color: white;
-            transform: translateY(-3px);
-        }
-        
-        .payment-methods {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .payment-method {
-            background-color: var(--darker);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            color: var(--gray);
-        }
-        
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .hero-text h1 {
-                font-size: 2.5rem;
-            }
-            
-            .section-title {
-                font-size: 2.2rem;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .hero {
-                flex-direction: column;
-                text-align: center;
-                padding: 80px 0;
-            }
-            
-            .hero-text {
-                max-width: 100%;
-                margin-bottom: 50px;
-            }
-            
-            .features {
-                justify-content: center;
-            }
-            
-            .minecraft-img {
-                max-width: 450px;
-            }
-            
-            .section {
-                padding: 80px 0;
-            }
-            
-            .plan-card.popular::after {
-                right: -25px;
-                padding: 5px 25px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 15px;
-                flex-wrap: wrap;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-                order: 1;
-            }
-            
-            .nav-links {
-                display: none;
-                width: 100%;
-                flex-direction: column;
-                margin-top: 15px;
-                padding: 15px 0;
-                border-top: 1px solid rgba(255,255,255,0.1);
-            }
-            
-            .nav-links.active {
-                display: flex;
-            }
-            
-            .nav-links a {
-                margin: 10px 0;
-                padding: 10px;
-                width: 100%;
-                text-align: center;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .hero-text h1 {
-                font-size: 2.2rem;
-            }
-            
-            .plan-card.popular::after {
-                right: -20px;
-                padding: 5px 20px;
-                font-size: 0.7rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .hero-text h1 {
-                font-size: 1.8rem;
-            }
-            
-            .price {
-                font-size: 2rem;
-                justify-content: center;
-            }
-            
-            .section {
-                padding: 60px 0;
-            }
-            
-            .section-title {
-                font-size: 1.8rem;
-            }
-            
-            .plan-card {
-                padding: 30px 20px;
-            }
-            
-            .plan-card.popular::after {
-                right: -15px;
-                padding: 5px 15px;
-                font-size: 0.6rem;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-        }
     </style>
 </head>
-<body>
+<body class="bg-slate-900 text-white overflow-x-hidden">
     <!-- Loading Animation -->
-    <div class="loader">
-        <div class="loader-content">
-            <div class="loader-spinner"></div>
-            <h2>Loading HexGen...</h2>
+    <div id="loader" class="loader fixed inset-0 bg-slate-950 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+            <h2 class="text-xl font-semibold">Loading HexGen...</h2>
         </div>
     </div>
-    
-    <div class="top-banner">
-        India Low latency AMD Epyc Minecraft Hosting Restocked in Delhi NCR! with ultra-low latency, and unbeatable prices!
+
+    <!-- Top Banner -->
+    <div class="bg-blue-500 text-center py-2 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shine"></div>
+        <p class="text-sm font-semibold relative z-10">
+            India Low latency AMD Epyc Minecraft Hosting Restocked in Delhi NCR! with ultra-low latency, and unbeatable prices!
+        </p>
     </div>
-    
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">
-                <img src="https://web.hexgen.shop/logo.png" alt="HexGen Logo">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-40 bg-slate-800/95 backdrop-blur-sm border-b border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="server" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xl font-bold">HexGen</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="hover:text-blue-400 transition-colors">Home</a>
+                    <a href="#minecraft" class="hover:text-blue-400 transition-colors">Minecraft Hosting</a>
+                    <a href="#ryzen" class="hover:text-blue-400 transition-colors">Ryzen 9 Hosting</a>
+                    <a href="#game" class="hover:text-blue-400 transition-colors">Game Hosting</a>
+                    <a href="#other" class="hover:text-blue-400 transition-colors">Other Hosting</a>
+                    <a href="#important" class="hover:text-blue-400 transition-colors">Important</a>
+                    <button class="border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-md transition-colors">
+                        SignIN / SignUP
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button id="mobileMenuBtn" class="md:hidden p-2 rounded-md hover:bg-slate-700">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
             </div>
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="nav-links" id="navLinks">
-                <a href="#">Home</a>
-                <a href="#minecraft">Minecraft Hosting</a>
-                <a href="#ryzen">Ryzen 9 Hosting</a>
-                <a href="#game">Game Hosting</a>
-                <a href="#other">Other Hosting</a>
-                <a href="#important">Important</a>
-                <a href="#signin" class="btn btn-outline">SignIN / SignUP</a>
+
+            <!-- Mobile Navigation -->
+            <div id="mobileMenu" class="hidden md:hidden py-4 border-t border-slate-700">
+                <div class="flex flex-col space-y-4">
+                    <a href="#" class="hover:text-blue-400 transition-colors">Home</a>
+                    <a href="#minecraft" class="hover:text-blue-400 transition-colors">Minecraft Hosting</a>
+                    <a href="#ryzen" class="hover:text-blue-400 transition-colors">Ryzen 9 Hosting</a>
+                    <a href="#game" class="hover:text-blue-400 transition-colors">Game Hosting</a>
+                    <a href="#other" class="hover:text-blue-400 transition-colors">Other Hosting</a>
+                    <a href="#important" class="hover:text-blue-400 transition-colors">Important</a>
+                    <button class="border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-md transition-colors w-fit">
+                        SignIN / SignUP
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
-    
-    <main class="container">
-        <section class="hero">
-            <div class="hero-text">
-                <h1>Premium Minecraft Hosting</h1>
-                <p>Experience the ultimate Minecraft hosting with our high-performance servers. Whether you're running a small private server or a large community, we've got you covered with our powerful hardware and low-latency network.</p>
-                <div class="features">
-                    <div class="feature">
-                        <i class="fas fa-bolt"></i> Instant Setup
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-shield-alt"></i> DDoS Protection
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-server"></i> Powerful Hardware
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-globe"></i> Global Locations
-                    </div>
-                </div>
-                <p>Starting at just</p>
-                <div class="price">₹599 <span>per month</span></div>
-                <button class="btn btn-primary" onclick="location.href='#minecraft'">GET STARTED →</button>
-            </div>
-            <div>
-                <img class="minecraft-img" src="https://gbnodes.host/assets/images/steve.png" alt="Minecraft Characters">
-            </div>
-        </section>
-        
-        <section class="section">
-            <h2 class="section-title">Why Choose HexGen?</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-tachometer-alt"></i>
-                    </div>
-                    <h3>Blazing Fast Speed</h3>
-                    <p>Our servers are powered by AMD Ryzen 9 5900X processors and DDR5 RAM for unparalleled performance and lightning-fast load times.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Enterprise Protection</h3>
-                    <p>Advanced DDoS protection keeps your server online even during the most powerful attacks with our 1Tbps+ mitigation.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <h3>Instant Setup</h3>
-                    <p>Your server is ready to play within seconds after payment confirmation with our automated provisioning system.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                    <h3>24/7 Support</h3>
-                    <p>Our expert support team is available round the clock via live chat and ticket system to assist you with any issues.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <h3>Global Locations</h3>
-                    <p>Choose from multiple server locations worldwide to ensure the lowest ping for you and your players.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-sliders-h"></i>
-                    </div>
-                    <h3>Full Control</h3>
-                    <p>Complete access to your server files, FTP, database, and full customization options for maximum flexibility.</p>
-                </div>
-            </div>
-        </section>
-        
-        <section class="section plans" id="minecraft">
-            <h2 class="section-title">Minecraft Hosting Plans</h2>
-            <div class="plans-grid">
-                <div class="plan-card">
-                    <div class="plan-icon">
-                        <i class="fas fa-tree"></i>
-                    </div>
-                    <h3>Wood Plan</h3>
-                    <div class="plan-price"><span class="currency">₹</span>599 <span class="period">/month</span></div>
-                    <div class="plan-features">
-                        <div class="plan-feature">
-                            <i class="fas fa-memory"></i> 2GB DDR5 RAM
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8 animate-fadeInUp">
+                    <h1 class="text-4xl lg:text-6xl font-bold gradient-text">
+                        Premium Minecraft Hosting
+                    </h1>
+                    <p class="text-lg text-slate-300 leading-relaxed">
+                        Experience the ultimate Minecraft hosting with our high-performance servers. Whether you're running a small private server or a large community, we've got you covered with our powerful hardware and low-latency network.
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <div class="flex items-center space-x-2 bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20 hover:bg-blue-500/20 transition-colors">
+                            <i data-lucide="zap" class="w-4 h-4 text-blue-400"></i>
+                            <span class="text-sm">Instant Setup</span>
                         </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-hdd"></i> 20GB NVMe (RAID 1)
+                        <div class="flex items-center space-x-2 bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20 hover:bg-blue-500/20 transition-colors">
+                            <i data-lucide="shield" class="w-4 h-4 text-blue-400"></i>
+                            <span class="text-sm">DDoS Protection</span>
                         </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-microchip"></i> 1 Ryzen vCore
+                        <div class="flex items-center space-x-2 bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20 hover:bg-blue-500/20 transition-colors">
+                            <i data-lucide="server" class="w-4 h-4 text-blue-400"></i>
+                            <span class="text-sm">Powerful Hardware</span>
                         </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-cloud"></i> 2x Cloud Backups
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-database"></i> 1 Database
+                        <div class="flex items-center space-x-2 bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20 hover:bg-blue-500/20 transition-colors">
+                            <i data-lucide="globe" class="w-4 h-4 text-blue-400"></i>
+                            <span class="text-sm">Global Locations</span>
                         </div>
                     </div>
-                    <button class="btn btn-outline">Order Now</button>
-                </div>
-                <div class="plan-card popular">
-                    <div class="plan-icon">
-                        <i class="fas fa-hammer"></i>
-                    </div>
-                    <h3>Iron Plan</h3>
-                    <div class="plan-price"><span class="currency">₹</span>899 <span class="period">/month</span></div>
-                    <div class="plan-features">
-                        <div class="plan-feature">
-                            <i class="fas fa-memory"></i> 4GB DDR5 RAM
+
+                    <div class="space-y-4">
+                        <p class="text-slate-400">Starting at just</p>
+                        <div class="flex items-end space-x-2">
+                            <span class="text-5xl font-bold text-blue-400">₹599</span>
+                            <span class="text-slate-400 mb-2">per month</span>
                         </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-hdd"></i> 25GB NVMe (RAID 1)
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-microchip"></i> 1 Ryzen vCore
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-cloud"></i> 3x Cloud Backups
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-database"></i> 2 Databases
-                        </div>
-                    </div>
-                    <button class="btn btn-primary">Order Now</button>
-                </div>
-                <div class="plan-card">
-                    <div class="plan-icon">
-                        <i class="fas fa-gem"></i>
-                    </div>
-                    <h3>Diamond Plan</h3>
-                    <div class="plan-price"><span class="currency">₹</span>1,299 <span class="period">/month</span></div>
-                    <div class="plan-features">
-                        <div class="plan-feature">
-                            <i class="fas fa-memory"></i> 6GB DDR5 RAM
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-hdd"></i> 50GB NVMe (RAID 1)
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-microchip"></i> 2 Ryzen vCores
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-cloud"></i> 4x Cloud Backups
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-database"></i> 3 Databases
-                        </div>
-                    </div>
-                    <button class="btn btn-outline">Order Now</button>
-                </div>
-                <div class="plan-card">
-                    <div class="plan-icon">
-                        <i class="fas fa-diamond"></i>
-                    </div>
-                    <h3>Pro Diamond Plan</h3>
-                    <div class="plan-price"><span class="currency">₹</span>1,599 <span class="period">/month</span></div>
-                    <div class="plan-features">
-                        <div class="plan-feature">
-                            <i class="fas fa-memory"></i> 8GB DDR5 RAM
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-hdd"></i> 50GB NVMe (RAID 1)
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-microchip"></i> 2 Ryzen vCores
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-cloud"></i> 5x Cloud Backups
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-database"></i> 4 Databases
-                        </div>
-                    </div>
-                    <button class="btn btn-outline">Order Now</button>
-                </div>
-                <div class="plan-card">
-                    <div class="plan-icon">
-                        <i class="fas fa-fire"></i>
-                    </div>
-                    <h3>Netherite Plan</h3>
-                    <div class="plan-price"><span class="currency">₹</span>2,099 <span class="period">/month</span></div>
-                    <div class="plan-features">
-                        <div class="plan-feature">
-                            <i class="fas fa-memory"></i> 12GB DDR5 RAM
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-hdd"></i> 75GB NVMe (RAID 1)
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-microchip"></i> 3 Ryzen vCores
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-cloud"></i> 6x Cloud Backups
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-database"></i> 5 Databases
-                        </div>
-                    </div>
-                    <button class="btn btn-outline">Order Now</button>
-                </div>
-                <div class="plan-card">
-                    <div class="plan-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Pro Netherite Plan</h3>
-                    <div class="plan-price"><span class="currency">₹</span>2,599 <span class="period">/month</span></div>
-                    <div class="plan-features">
-                        <div class="plan-feature">
-                            <i class="fas fa-memory"></i> 16GB DDR5 RAM
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-hdd"></i> 120GB NVMe (RAID 1)
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-microchip"></i> 4 Ryzen vCores
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-cloud"></i> 8x Cloud Backups
-                        </div>
-                        <div class="plan-feature">
-                            <i class="fas fa-database"></i> 6 Databases
-                        </div>
-                    </div>
-                    <button class="btn btn-outline">Order Now</button>
-                </div>
-            </div>
-        </section>
-        
-        <section class="section stats">
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">10,000+</div>
-                    <div class="stat-label">Happy Customers</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">99.9%</div>
-                    <div class="stat-label">Uptime Guarantee</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">15+</div>
-                    <div class="stat-label">Server Locations</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Support Available</div>
-                </div>
-            </div>
-        </section>
-        
-        <section class="section locations">
-            <h2 class="section-title">Our Server Locations</h2>
-            <div class="locations-grid">
-                <div class="location-card">
-                    <div class="location-icon">
-                        <i class="fas fa-flag-usa"></i>
-                    </div>
-                    <h3>North America</h3>
-                    <p>Dallas, New York, Los Angeles</p>
-                    <span class="location-ping">5-30ms</span>
-                </div>
-                <div class="location-card">
-                    <div class="location-icon">
-                        <i class="fas fa-globe-europe"></i>
-                    </div>
-                    <h3>Europe</h3>
-                    <p>London, Frankfurt, Paris</p>
-                    <span class="location-ping">10-50ms</span>
-                </div>
-                <div class="location-card">
-                    <div class="location-icon">
-                        <i class="fas fa-globe-asia"></i>
-                    </div>
-                    <h3>Asia</h3>
-                    <p>Singapore, Mumbai, Tokyo</p>
-                    <span class="location-ping">5-40ms</span>
-                </div>
-                <div class="location-card">
-                    <div class="location-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <h3>Oceania</h3>
-                    <p>Sydney, Melbourne</p>
-                    <span class="location-ping">10-30ms</span>
-                </div>
-            </div>
-        </section>
-        
-        <section class="section testimonials">
-            <h2 class="section-title">What Our Customers Say</h2>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p class="testimonial-text">I've tried many hosting providers, but HexGen stands out with their exceptional performance and support. My server has never been more stable!</p>
-                        <div class="testimonial-author">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Customer">
-                            <div class="author-info">
-                                <h4>Alex Johnson</h4>
-                                <p>Minecraft Server Owner</p>
-                            </div>
-                        </div>
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                            GET STARTED →
+                        </button>
                     </div>
                 </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p class="testimonial-text">The low latency in India is a game-changer for our community. We finally have a hosting provider that understands the needs of Indian gamers.</p>
-                        <div class="testimonial-author">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Customer">
-                            <div class="author-info">
-                                <h4>Priya Sharma</h4>
-                                <p>Gaming Community Leader</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p class="testimonial-text">The value for money is unbeatable. I get premium features at affordable prices, and the support team is always quick to help with any issues.</p>
-                        <div class="testimonial-author">
-                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Customer">
-                            <div class="author-info">
-                                <h4>David Wilson</h4>
-                                <p>Content Creator</p>
-                            </div>
-                        </div>
+
+                <div class="flex justify-center">
+                    <div class="relative">
+                        <div class="w-80 h-80 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl absolute inset-0"></div>
+                        <img src="https://gbnodes.host/assets/images/steve.png" alt="Minecraft Characters" class="relative z-10 w-full max-w-md animate-float">
                     </div>
                 </div>
             </div>
-        </section>
-        
-        <section class="section cta">
-            <div class="cta-content">
-                <h2>Ready to Boost Your Gaming Experience?</h2>
-                <p>Join thousands of satisfied customers who trust HexGen for their gaming server needs. Get started in minutes with our easy setup and powerful infrastructure.</p>
-                <button class="btn btn-primary">Get Started Now →</button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-slate-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4">Why Choose HexGen?</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto"></div>
             </div>
-        </section>
-    </main>
-    
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>HexGen</h3>
-                    <p>Premium game server hosting with high-performance hardware and low-latency networks worldwide.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-discord"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-facebook"></i></a>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6 text-center">
+                    <div class="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="gauge" class="w-8 h-8 text-blue-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Blazing Fast Speed</h3>
+                    <p class="text-slate-400 leading-relaxed">Our servers are powered by AMD Ryzen 9 5900X processors and DDR5 RAM for unparalleled performance and lightning-fast load times.</p>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6 text-center">
+                    <div class="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="shield" class="w-8 h-8 text-blue-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Enterprise Protection</h3>
+                    <p class="text-slate-400 leading-relaxed">Advanced DDoS protection keeps your server online even during the most powerful attacks with our 1Tbps+ mitigation.</p>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6 text-center">
+                    <div class="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="rocket" class="w-8 h-8 text-blue-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Instant Setup</h3>
+                    <p class="text-slate-400 leading-relaxed">Your server is ready to play within seconds after payment confirmation with our automated provisioning system.</p>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6 text-center">
+                    <div class="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="headphones" class="w-8 h-8 text-blue-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">24/7 Support</h3>
+                    <p class="text-slate-400 leading-relaxed">Our expert support team is available round the clock via live chat and ticket system to assist you with any issues.</p>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6 text-center">
+                    <div class="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="globe" class="w-8 h-8 text-blue-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Global Locations</h3>
+                    <p class="text-slate-400 leading-relaxed">Choose from multiple server locations worldwide to ensure the lowest ping for you and your players.</p>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6 text-center">
+                    <div class="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="sliders" class="w-8 h-8 text-blue-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Full Control</h3>
+                    <p class="text-slate-400 leading-relaxed">Complete access to your server files, FTP, database, and full customization options for maximum flexibility.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Plans -->
+    <section id="minecraft" class="py-20 bg-slate-950/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4">Minecraft Hosting Plans</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Wood Plan -->
+                <div class="relative bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6">
+                    <div class="text-center mb-6">
+                        <i data-lucide="tree-pine" class="w-12 h-12 text-blue-400 mx-auto mb-4"></i>
+                        <h3 class="text-xl font-bold text-blue-400 mb-2">Wood Plan</h3>
+                        <div class="flex items-end justify-center space-x-1">
+                            <span class="text-2xl text-blue-400">₹</span>
+                            <span class="text-4xl font-bold">599</span>
+                            <span class="text-slate-400 mb-1">/month</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="memory-stick" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">2GB DDR5 RAM</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="hard-drive" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">20GB NVMe (RAID 1)</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="cpu" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">1 Ryzen vCore</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="cloud" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">2x Cloud Backups</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="database" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">1 Database</span>
+                        </div>
+                    </div>
+
+                    <button class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-lg transition-colors">
+                        Order Now
+                    </button>
+                </div>
+
+                <!-- Iron Plan (Popular) -->
+                <div class="relative bg-slate-800 border border-blue-500 shadow-lg shadow-blue-500/20 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                            MOST POPULAR
+                        </span>
+                    </div>
+                    <div class="text-center mb-6">
+                        <i data-lucide="hammer" class="w-12 h-12 text-blue-400 mx-auto mb-4"></i>
+                        <h3 class="text-xl font-bold text-blue-400 mb-2">Iron Plan</h3>
+                        <div class="flex items-end justify-center space-x-1">
+                            <span class="text-2xl text-blue-400">₹</span>
+                            <span class="text-4xl font-bold">899</span>
+                            <span class="text-slate-400 mb-1">/month</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="memory-stick" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">4GB DDR5 RAM</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="hard-drive" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">25GB NVMe (RAID 1)</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="cpu" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">1 Ryzen vCore</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="cloud" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">3x Cloud Backups</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="database" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">2 Databases</span>
+                        </div>
+                    </div>
+
+                    <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors">
+                        Order Now
+                    </button>
+                </div>
+
+                <!-- Diamond Plan -->
+                <div class="relative bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6">
+                    <div class="text-center mb-6">
+                        <i data-lucide="gem" class="w-12 h-12 text-blue-400 mx-auto mb-4"></i>
+                        <h3 class="text-xl font-bold text-blue-400 mb-2">Diamond Plan</h3>
+                        <div class="flex items-end justify-center space-x-1">
+                            <span class="text-2xl text-blue-400">₹</span>
+                            <span class="text-4xl font-bold">1,299</span>
+                            <span class="text-slate-400 mb-1">/month</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="memory-stick" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">6GB DDR5 RAM</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="hard-drive" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">50GB NVMe (RAID 1)</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="cpu" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">2 Ryzen vCores</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="cloud" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">4x Cloud Backups</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="database" class="w-4 h-4 text-blue-400 flex-shrink-0"></i>
+                            <span class="text-sm">3 Databases</span>
+                        </div>
+                    </div>
+
+                    <button class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-lg transition-colors">
+                        Order Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 bg-slate-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                <div class="space-y-2">
+                    <div class="text-4xl font-bold text-blue-400">10,000+</div>
+                    <div class="text-slate-400">Happy Customers</div>
+                </div>
+                <div class="space-y-2">
+                    <div class="text-4xl font-bold text-blue-400">99.9%</div>
+                    <div class="text-slate-400">Uptime Guarantee</div>
+                </div>
+                <div class="space-y-2">
+                    <div class="text-4xl font-bold text-blue-400">15+</div>
+                    <div class="text-slate-400">Server Locations</div>
+                </div>
+                <div class="space-y-2">
+                    <div class="text-4xl font-bold text-blue-400">24/7</div>
+                    <div class="text-slate-400">Support Available</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Server Locations -->
+    <section class="py-20 bg-slate-950/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4">Our Server Locations</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6 text-center">
+                    <i data-lucide="flag" class="w-12 h-12 text-blue-400 mx-auto mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">North America</h3>
+                    <p class="text-slate-400 text-sm mb-4">Dallas, New York, Los Angeles</p>
+                    <span class="inline-block bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        5-30ms
+                    </span>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6 text-center">
+                    <i data-lucide="globe" class="w-12 h-12 text-blue-400 mx-auto mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Europe</h3>
+                    <p class="text-slate-400 text-sm mb-4">London, Frankfurt, Paris</p>
+                    <span class="inline-block bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        10-50ms
+                    </span>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6 text-center">
+                    <i data-lucide="globe" class="w-12 h-12 text-blue-400 mx-auto mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Asia</h3>
+                    <p class="text-slate-400 text-sm mb-4">Singapore, Mumbai, Tokyo</p>
+                    <span class="inline-block bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        5-40ms
+                    </span>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-2 rounded-lg p-6 text-center">
+                    <i data-lucide="globe" class="w-12 h-12 text-blue-400 mx-auto mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Oceania</h3>
+                    <p class="text-slate-400 text-sm mb-4">Sydney, Melbourne</p>
+                    <span class="inline-block bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        10-30ms
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-20 bg-slate-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4">What Our Customers Say</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                    <div class="text-6xl text-blue-500/20 font-serif mb-4">"</div>
+                    <p class="text-slate-300 italic mb-6 leading-relaxed">I've tried many hosting providers, but HexGen stands out with their exceptional performance and support. My server has never been more stable!</p>
+                    <div class="flex items-center space-x-3">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Johnson" class="w-12 h-12 rounded-full border-2 border-blue-500">
+                        <div>
+                            <h4 class="font-semibold">Alex Johnson</h4>
+                            <p class="text-slate-400 text-sm">Minecraft Server Owner</p>
+                        </div>
                     </div>
                 </div>
-                <div class="footer-column">
-                    <h3>Hosting</h3>
-                    <ul>
-                        <li><a href="#">Minecraft Hosting</a></li>
-                        <li><a href="#">Ryzen 9 Hosting</a></li>
-                        <li><a href="#">Game Hosting</a></li>
-                        <li><a href="#">VPS Hosting</a></li>
-                        <li><a href="#">Dedicated Servers</a></li>
+
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                    <div class="text-6xl text-blue-500/20 font-serif mb-4">"</div>
+                    <p class="text-slate-300 italic mb-6 leading-relaxed">The low latency in India is a game-changer for our community. We finally have a hosting provider that understands the needs of Indian gamers.</p>
+                    <div class="flex items-center space-x-3">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya Sharma" class="w-12 h-12 rounded-full border-2 border-blue-500">
+                        <div>
+                            <h4 class="font-semibold">Priya Sharma</h4>
+                            <p class="text-slate-400 text-sm">Gaming Community Leader</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                    <div class="text-6xl text-blue-500/20 font-serif mb-4">"</div>
+                    <p class="text-slate-300 italic mb-6 leading-relaxed">The value for money is unbeatable. I get premium features at affordable prices, and the support team is always quick to help with any issues.</p>
+                    <div class="flex items-center space-x-3">
+                        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="David Wilson" class="w-12 h-12 rounded-full border-2 border-blue-500">
+                        <div>
+                            <h4 class="font-semibold">David Wilson</h4>
+                            <p class="text-slate-400 text-sm">Content Creator</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="text-3xl lg:text-4xl font-bold mb-6 gradient-text">
+                Ready to Boost Your Gaming Experience?
+            </h2>
+            <p class="text-lg text-slate-300 mb-8 leading-relaxed">
+                Join thousands of satisfied customers who trust HexGen for their gaming server needs. Get started in minutes with our easy setup and powerful infrastructure.
+            </p>
+            <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                Get Started Now →
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                            <i data-lucide="server" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-xl font-bold">HexGen</span>
+                    </div>
+                    <p class="text-slate-400 mb-6 leading-relaxed">
+                        Premium game server hosting with high-performance hardware and low-latency networks worldwide.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
+                            <i data-lucide="message-square" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
+                            <i data-lucide="twitter" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
+                            <i data-lucide="instagram" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
+                            <i data-lucide="facebook" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-4 text-white">Hosting</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Minecraft Hosting</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Ryzen 9 Hosting</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Game Hosting</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">VPS Hosting</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Dedicated Servers</a></li>
                     </ul>
                 </div>
-                <div class="footer-column">
-                    <h3>Company</h3>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Our Team</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Contact Us</a></li>
+
+                <div>
+                    <h3 class="font-semibold mb-4 text-white">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">About Us</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Our Team</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Careers</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Blog</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Contact Us</a></li>
                     </ul>
                 </div>
-                <div class="footer-column">
-                    <h3>Support</h3>
-                    <ul>
-                        <li><a href="#">Knowledge Base</a></li>
-                        <li><a href="#">Tutorials</a></li>
-                        <li><a href="#">Server Status</a></li>
-                        <li><a href="#">Submit Ticket</a></li>
-                        <li><a href="#">Live Chat</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Legal</h3>
-                    <ul>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Acceptable Use</a></li>
-                        <li><a href="#">Refund Policy</a></li>
-                        <li><a href="#">SLA</a></li>
+
+                <div>
+                    <h3 class="font-semibold mb-4 text-white">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Knowledge Base</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Tutorials</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Server Status</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Submit Ticket</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-blue-400 transition-colors text-sm">Live Chat</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 HexGen. All rights reserved.<br>Designed with <i class="fas fa-heart" style="color: var(--primary);"></i> by Zenova(Taimiya) </p>
+
+            <div class="border-t border-slate-800 mt-12 pt-8 text-center">
+                <p class="text-slate-400 text-sm">
+                    © 2025 HexGen. All rights reserved.
+                    <br>
+                    Designed with <i data-lucide="heart" class="w-4 h-4 text-blue-500 inline mx-1"></i> by Zenova(Taimiya)<br>
+                    Enhance with <i data-lucide="heart" class="w-4 h-4 text-red-500 inline mx-1"></i> by VG WARDEN
+                </p>
             </div>
         </div>
     </footer>
 
     <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
         // Mobile menu toggle
         document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-            document.getElementById('navLinks').classList.toggle('active');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuIcon = this.querySelector('[data-lucide]');
+            
+            mobileMenu.classList.toggle('hidden');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                menuIcon.setAttribute('data-lucide', 'menu');
+            } else {
+                menuIcon.setAttribute('data-lucide', 'x');
+            }
+            
+            // Re-initialize icons after changing
+            lucide.createIcons();
         });
 
         // Loading animation
         window.addEventListener('load', function() {
             setTimeout(function() {
-                document.querySelector('.loader').classList.add('hidden');
-            }, 1000); // Adjust time as needed
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
         });
     </script>
 </body>
